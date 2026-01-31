@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1e3a8a" />
+  <title>CVL • Dashboard Admin</title>
+  <style>
+    :root{--primary:#1e3a8a;--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#475569;--border:#e2e8f0;--shadow:0 4px 12px rgba(0,0,0,.08)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+    header{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,var(--primary),#1e40af);color:#fff;padding:14px 16px;box-shadow:var(--shadow)}
+    header .row{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    header h1{margin:0;font-size:18px;letter-spacing:-.01em}
+    header a{color:#fff;text-decoration:none;font-weight:800}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+    .metric{grid-column:span 3}
+    .metric .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .metric .v{font-size:26px;font-weight:900;margin-top:2px}
+    .wide{grid-column:span 6}
+    .full{grid-column:span 12}
+    canvas{width:100%;height:260px}
+    .small canvas{height:220px}
+    .muted{color:var(--muted);font-size:13px}
+    .warn{background:#fff7ed;border-color:#fdba74}
+    @media (max-width: 900px){
+      .metric{grid-column:span 6}
+      .wide{grid-column:span 12}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="row">
+      <h1>📈 Dashboard Admin</h1>
+      <a href="/">← Retour PWA</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div id="not-admin" class="card warn" style="display:none">
+      <div style="font-weight:900">Non connecté en admin</div>
+      <div class="muted">Va sur l’écran Contact de la PWA, connecte-toi, puis reviens ici.</div>
+    </div>
+
+    <div class="grid" id="dash" style="display:none">
+      <div class="card metric"><div class="k">Idées</div><div class="v" id="m-ideas">—</div></div>
+      <div class="card metric"><div class="k">Votes</div><div class="v" id="m-votes">—</div></div>
+      <div class="card metric"><div class="k">Actualités</div><div class="v" id="m-news">—</div></div>
+      <div class="card metric"><div class="k">Connexions (14j)</div><div class="v" id="m-conn">—</div></div>
+
+      <div class="card wide small">
+        <div style="font-weight:900;margin-bottom:8px">Idées par statut</div>
+        <canvas id="chart-ideas"></canvas>
+        <div class="muted">Source: table ideas (GROUP BY status)</div>
+      </div>
+
+      <div class="card wide small">
+        <div style="font-weight:900;margin-bottom:8px">Connexions journalières (14 jours)</div>
+        <canvas id="chart-conn"></canvas>
+        <div class="muted">1 connexion = 1 device/jour sur endpoints GET /api/public/*</div>
+      </div>
+
+      <div class="card full">
+        <div style="font-weight:900;margin-bottom:8px">Participation sondages (10 derniers)</div>
+        <canvas id="chart-polls"></canvas>
+        <div class="muted">Votes totaux par sondage (LEFT JOIN poll_votes)</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./dashboard.js"></script>
+</body>
+</html>

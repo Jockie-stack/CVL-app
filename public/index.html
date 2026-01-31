@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="description" content="Application du Conseil de la Vie Lycéenne">
+    <link rel="manifest" href="manifest.json">
+    <title>CVL - Conseil de la Vie Lycéenne</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap');
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary: #0ea5e9;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-family: 'Archivo', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            font-family: 'Archivo', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-primary { background: #dbeafe; color: var(--primary); }
+        .badge-success { background: #d1fae5; color: #059669; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
+
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Archivo', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(30, 58, 138, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23475569' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.875rem center;
+            padding-right: 2.5rem;
+        }
+
+        .news-item {
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .news-date {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .news-title {
+            font-family: 'Archivo', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .news-content {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .poll-option {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poll-option:hover {
+            border-color: var(--primary);
+            background: var(--bg-primary);
+        }
+
+        .poll-option input[type="radio"] {
+            margin-right: 0.75rem;
+        }
+
+        .poll-result {
+            margin-bottom: 0.75rem;
+        }
+
+        .poll-result-bar {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            height: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poll-result-fill {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            height: 100%;
+            transition: width 0.6s ease-out;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .poll-result-label {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .contact-content h3 {
+            font-family: 'Archivo', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-family: 'Archivo', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            opacity: 0.95;
+            line-height: 1.7;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-family: 'Archivo', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        .char-counter.warning {
+            color: var(--accent);
+        }
+
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 1.25rem;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-tertiary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state-text {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .admin-panel {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .idea-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .idea-meta {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .idea-content {
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .idea-date {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-family: 'Archivo', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-tertiary);
+        }
+
+        .options-list {
+            margin-bottom: 1rem;
+        }
+
+        .option-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .option-input-group input {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏫 CVL - Conseil de la Vie Lycéenne</h1>
+        <p>Ta voix compte !</p>
+    </div>
+
+    <!-- Écran Accueil -->
+    <div class="screen active" id="screen-accueil">
+        <div class="container">
+            <div class="hero">
+                <h2>Bienvenue au CVL !</h2>
+                <p>Le Conseil de la Vie Lycéenne est ton espace d'expression et de participation. Ensemble, améliorons notre vie au lycée.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-ideas">0</div>
+                    <div class="stat-label">Idées proposées</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-votes">0</div>
+                    <div class="stat-label">Votes exprimés</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🎯 Rôle du CVL</div>
+                <div class="card-content">
+                    <p>Le CVL est composé d'élèves élus qui représentent tous les lycéens. Nous travaillons sur :</p>
+                    <ul style="margin-top: 0.75rem; margin-left: 1.25rem; color: var(--text-secondary);">
+                        <li>L'amélioration de la vie quotidienne au lycée</li>
+                        <li>L'organisation d'événements et d'activités</li>
+                        <li>La communication entre élèves et administration</li>
+                        <li>Les projets écologiques et citoyens</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">📰 À la une</div>
+                <div class="card-content" id="home-news">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📢</div>
+                        <div class="empty-state-text">Aucune actualité pour le moment</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" onclick="navigateTo('boite-idees')">
+                💡 Proposer une idée
+            </button>
+        </div>
+    </div>
+
+    <!-- Écran Actualités -->
+    <div class="screen" id="screen-actualites">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">📰 Actualités du CVL</div>
+            </div>
+            
+            <div id="news-list">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📰</div>
+                    <div class="empty-state-text">Aucune actualité publiée</div>
+                </div>
+            </div>
+
+            <div id="admin-news-section" style="display: none;">
+                <div class="admin-panel">
+                    <div class="admin-header">
+                        <h3 style="font-family: 'Archivo', sans-serif; color: var(--primary);">⚙️ Gestion (Admin)</h3>
+                        <button class="btn btn-primary btn-sm" onclick="showAddNewsModal()">+ Nouvelle actualité</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Boîte à idées -->
+    <div class="screen" id="screen-boite-idees">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">💡 Boîte à idées</div>
+                <div class="card-content">
+                    <div class="alert alert-info">
+                        <strong>💭 Ton idée est anonyme</strong><br>
+                        Partage tes suggestions pour améliorer la vie au lycée. Seuls les membres du CVL pourront les consulter.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <form id="idea-form">
+                    <div class="form-group">
+                        <label class="form-label">📝 Ton idée *</label>
+                        <textarea 
+                            class="form-control" 
+                            id="idea-text" 
+                            maxlength="500" 
+                            placeholder="Décris ton idée en détail..."
+                            required
+                        ></textarea>
+                        <div class="char-counter" id="char-counter">0 / 500</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">🏷️ Catégorie *</label>
+                        <select class="form-control" id="idea-category" required>
+                            <option value="">Sélectionne une catégorie</option>
+                            <option value="vie-scolaire">Vie scolaire</option>
+                            <option value="cantine">Cantine</option>
+                            <option value="ecologie">Écologie</option>
+                            <option value="clubs-evenements">Clubs & événements</option>
+                            <option value="materiel">Matériel</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">⚡ Niveau d'urgence *</label>
+                        <select class="form-control" id="idea-urgency" required>
+                            <option value="">Sélectionne un niveau</option>
+                            <option value="basse">Basse</option>
+                            <option value="moyenne">Moyenne</option>
+                            <option value="haute">Haute</option>
+                        </select>
+                    </div>
+
+                    <div id="idea-cooldown" class="alert alert-warning" style="display: none;"></div>
+                    <div id="idea-success" class="alert alert-success" style="display: none;"></div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="submit-idea-btn">
+                        📤 Envoyer mon idée
+                    </button>
+                </form>
+            </div>
+
+            <div id="admin-ideas-section" style="display: none;">
+                <div class="admin-panel">
+                    <div class="admin-header">
+                        <h3 style="font-family: 'Archivo', sans-serif; color: var(--primary);">⚙️ Idées reçues (Admin)</h3>
+                        <span class="badge badge-primary" id="ideas-count">0 idées</span>
+                    </div>
+                    <div id="ideas-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Sondage -->
+    <div class="screen" id="screen-sondage">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">📊 Sondage en cours</div>
+            </div>
+
+            <div id="poll-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📊</div>
+                    <div class="empty-state-text">Aucun sondage actif pour le moment</div>
+                </div>
+            </div>
+
+            <div id="admin-poll-section" style="display: none;">
+                <div class="admin-panel">
+                    <div class="admin-header">
+                        <h3 style="font-family: 'Archivo', sans-serif; color: var(--primary);">⚙️ Gestion (Admin)</h3>
+                        <button class="btn btn-primary btn-sm" onclick="showCreatePollModal()">+ Nouveau sondage</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Infos Lycée -->
+    <div class="screen" id="screen-infos-lycee">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">🏫 Infos lycée</div>
+                <div class="card-content">
+                    <div class="alert alert-info">
+                        <strong>📌 Centralisé</strong><br>
+                        Quelques informations clés (mise à jour côté admin). Les liens officiels restent la source de référence.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">📅 JPO 2026</div>
+                <div class="card-content" id="info-jpo"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🧭 Mini-stages</div>
+                <div class="card-content" id="info-stages"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🔬 Info scientifique</div>
+                <div class="card-content" id="info-science"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🎙️ Cycle Mauriac</div>
+                <div class="card-content" id="info-cycle"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">💶 Aides Région</div>
+                <div class="card-content" id="info-region"></div>
+            </div>
+        </div>
+    </div>
+
+<!-- Écran Contact -->
+    <div class="screen" id="screen-contact">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">☎️ Nous contacter</div>
+                <div class="card-content">
+                    <div class="contact-info">
+                        <div class="contact-icon">✉️</div>
+                        <div class="contact-content">
+                            <h3>Email officiel</h3>
+                            <p><a href="mailto:cvl@lycee-exemple.fr" style="color: var(--primary);">cvl@lycee-exemple.fr</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-info">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-content">
+                            <h3>Permanence</h3>
+                            <p>Foyer des élèves<br>Mardi et jeudi : 12h30 - 13h30</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-info">
+                        <div class="contact-icon">👤</div>
+                        <div class="contact-content">
+                            <h3>Référent adulte</h3>
+                            <p>M. Dupont (CPE)<br>Bureau Vie Scolaire</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">ℹ️ Utilisation responsable</div>
+                <div class="card-content">
+                    <p style="margin-bottom: 1rem;">Cette application est un outil institutionnel géré par le CVL et l'équipe éducative du lycée.</p>
+                    <ul style="margin-left: 1.25rem; color: var(--text-secondary);">
+                        <li>Vos idées et votes sont anonymes</li>
+                        <li>Aucune donnée personnelle n'est collectée</li>
+                        <li>Le contenu est modéré par les administrateurs</li>
+                        <li>Respect mutuel et bienveillance requis</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🔐 Connexion Admin</div>
+                <div class="card-content">
+                    <div id="admin-login-section">
+                        <div class="form-group">
+                            <label class="form-label">Code administrateur</label>
+                            <input type="password" class="form-control" id="admin-password" placeholder="Entrez le code">
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="adminLogin()">Se connecter</button>
+                    </div>
+                    <div id="admin-logout-section" style="display: none;">
+                        <p style="margin-bottom: 1rem; color: var(--success); font-weight: 600;">✅ Connecté en tant qu'administrateur</p>
+                        <button class="btn btn-secondary btn-block" onclick="adminLogout()">Se déconnecter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="navigateTo('accueil')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Accueil</div>
+        </div>
+        <div class="nav-item" onclick="navigateTo('actualites')">
+            <div class="nav-icon">📰</div>
+            <div class="nav-label">Actualités</div>
+        </div>
+        <div class="nav-item" onclick="navigateTo('infos-lycee')">
+            <div class="nav-icon">🏫</div>
+            <div class="nav-label">Infos</div>
+        </div>
+        <div class="nav-item" onclick="navigateTo('boite-idees')">
+            <div class="nav-icon">💡</div>
+            <div class="nav-label">Idées</div>
+        </div>
+        <div class="nav-item" onclick="navigateTo('sondage')">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Sondage</div>
+        </div>
+        <div class="nav-item" onclick="navigateTo('contact')">
+            <div class="nav-icon">☎️</div>
+            <div class="nav-label">Contact</div>
+        </div>
+    </div>
+
+    <!-- Modal Nouvelle Actualité -->
+    <div class="modal" id="news-modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeNewsModal()">×</span>
+            <h2 class="modal-header">Nouvelle actualité</h2>
+            <form id="news-form">
+                <div class="form-group">
+                    <label class="form-label">Titre *</label>
+                    <input type="text" class="form-control" id="news-title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description *</label>
+                    <textarea class="form-control" id="news-description" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Publier</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nouveau Sondage -->
+    <div class="modal" id="poll-modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closePollModal()">×</span>
+            <h2 class="modal-header">Créer un sondage</h2>
+            <form id="poll-form">
+                <div class="form-group">
+                    <label class="form-label">Question *</label>
+                    <input type="text" class="form-control" id="poll-question" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Options (2 minimum) *</label>
+                    <div class="options-list" id="poll-options-list">
+                        <div class="option-input-group">
+                            <input type="text" class="form-control poll-option-input" placeholder="Option 1" required>
+                        </div>
+                        <div class="option-input-group">
+                            <input type="text" class="form-control poll-option-input" placeholder="Option 2" required>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addPollOption()">+ Ajouter une option</button>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Créer le sondage</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <script>
+      // =======================
+      // Config
+      // =======================
+      const API_BASE = ""; // same origin. If backend is on another domain, set it here.
+      const LS = {
+        DEVICE_ID: "cvl_device_id",
+        USER_VOTE: "cvl_user_vote"
+      };
+
+      function getDeviceId() {
+        let id = localStorage.getItem(LS.DEVICE_ID);
+        if (!id) {
+          id = (crypto?.randomUUID?.() || (Date.now().toString(36) + Math.random().toString(36).slice(2)));
+          localStorage.setItem(LS.DEVICE_ID, id);
+        }
+        return id;
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("\"", "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      async function api(path, opts = {}) {
+        const res = await fetch(API_BASE + path, {
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Device-Id": getDeviceId(),
+            ...(opts.headers || {})
+          },
+          ...opts
+        });
+        const contentType = res.headers.get("content-type") || "";
+        const data = contentType.includes("application/json") ? await res.json().catch(() => ({})) : await res.text().catch(() => "");
+        if (!res.ok) {
+          const msg = (data && data.error) ? data.error : `Erreur (${res.status})`;
+          throw Object.assign(new Error(msg), { status: res.status, data });
+        }
+        return data;
+      }
+
+      // =======================
+      // Navigation
+      // =======================
+      function navigateTo(screenName) {
+        document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+
+        document.getElementById(`screen-${screenName}`).classList.add("active");
+        if (window.event?.currentTarget) window.event.currentTarget.classList.add("active");
+
+        window.scrollTo(0, 0);
+
+        if (screenName === "accueil") loadHomeScreen();
+        if (screenName === "actualites") loadNews();
+        if (screenName === "infos-lycee") loadInfosLycee();
+        if (screenName === "boite-idees") loadIdeasAdminIfNeeded();
+        if (screenName === "sondage") loadPoll();
+        if (screenName === "contact") refreshAdminState();
+      }
+
+      // =======================
+      // Admin state
+      // =======================
+      async function refreshAdminState() {
+        let admin = false;
+        try {
+          const me = await api("/api/admin/me");
+          admin = !!me?.admin;
+        } catch (_) {
+          admin = false;
+        }
+
+        document.getElementById("admin-login-section").style.display = admin ? "none" : "block";
+        document.getElementById("admin-logout-section").style.display = admin ? "block" : "none";
+        document.getElementById("admin-news-section").style.display = admin ? "block" : "none";
+        document.getElementById("admin-ideas-section").style.display = admin ? "block" : "none";
+        document.getElementById("admin-poll-section").style.display = admin ? "block" : "none";
+
+        if (admin) {
+          loadNews();
+          loadIdeas();
+          loadPoll();
+        }
+      }
+
+      async function adminLogin() {
+        const password = document.getElementById("admin-password").value;
+        try {
+          await api("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify({ password })
+          });
+          document.getElementById("admin-password").value = "";
+          alert("✅ Connexion administrateur réussie");
+          await refreshAdminState();
+        } catch (e) {
+          alert("❌ " + e.message);
+        }
+      }
+
+      async function adminLogout() {
+        try {
+          await api("/api/auth/logout", { method: "POST" });
+        } catch (_) {}
+        alert("👋 Déconnecté");
+        await refreshAdminState();
+      }
+
+      // =======================
+      // Home + stats (server-side)
+      // =======================
+      async function loadHomeScreen() {
+        displayStats();
+        await loadNews(true);
+      }
+
+      async function displayStats() {
+        try {
+          const s = await api("/api/public/stats");
+          document.getElementById("stat-ideas").textContent = s.ideas ?? 0;
+          document.getElementById("stat-votes").textContent = s.votes ?? 0;
+        } catch (_) {
+          document.getElementById("stat-ideas").textContent = "—";
+          document.getElementById("stat-votes").textContent = "—";
+        }
+      }
+
+      // =======================
+      // News
+      // =======================
+      async function loadNews(homeOnly = false) {
+        try {
+          const news = await api("/api/public/news");
+          renderNews(news || [], homeOnly);
+        } catch (e) {
+          const target = homeOnly ? document.getElementById("home-news") : document.getElementById("news-list");
+          target.innerHTML = `<div class="alert alert-warning">${escapeHtml(e.message)}</div>`;
+        }
+      }
+
+      function renderNews(items, homeOnly) {
+        const listEl = homeOnly ? document.getElementById("home-news") : document.getElementById("news-list");
+        if (!items.length) {
+          listEl.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📰</div>
+              <div class="empty-state-text">Aucune actualité publiée</div>
+            </div>`;
+          return;
+        }
+
+        const html = items.map(n => `
+          <div class="card">
+            <div class="news-item">
+              <div class="news-date">${escapeHtml(new Date(n.created_at).toLocaleDateString("fr-FR"))}</div>
+              <div class="news-title">${escapeHtml(n.title)}</div>
+              <div class="news-content">${escapeHtml(n.description).replaceAll("\n","<br>")}</div>
+            </div>
+          </div>
+        `).join("");
+        listEl.innerHTML = html;
+      }
+
+      function showAddNewsModal() {
+        document.getElementById("news-modal").classList.add("active");
+      }
+      function closeNewsModal() {
+        document.getElementById("news-modal").classList.remove("active");
+      }
+
+      document.getElementById("news-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          const title = document.getElementById("news-title").value.trim();
+          const description = document.getElementById("news-description").value.trim();
+          await api("/api/admin/news", {
+            method: "POST",
+            body: JSON.stringify({ title, description })
+          });
+          document.getElementById("news-title").value = "";
+          document.getElementById("news-description").value = "";
+          closeNewsModal();
+          await loadNews();
+          await loadHomeScreen();
+          alert("✅ Actualité publiée");
+        } catch (err) {
+          alert("❌ " + err.message);
+        }
+      });
+
+      // =======================
+      // Ideas
+      // =======================
+      const ideaTextEl = document.getElementById("idea-text");
+      const charCounterEl = document.getElementById("char-counter");
+      ideaTextEl.addEventListener("input", () => {
+        const len = ideaTextEl.value.length;
+        charCounterEl.textContent = `${len} / 500`;
+        charCounterEl.classList.toggle("warning", len > 450);
+      });
+
+      document.getElementById("idea-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const text = document.getElementById("idea-text").value.trim();
+        const category = document.getElementById("idea-category").value;
+        const urgency = document.getElementById("idea-urgency").value;
+
+        const successEl = document.getElementById("idea-success");
+        const cooldownEl = document.getElementById("idea-cooldown");
+        successEl.style.display = "none";
+        cooldownEl.style.display = "none";
+
+        try {
+          await api("/api/public/ideas", {
+            method: "POST",
+            body: JSON.stringify({ text, category, urgency, hp: "" }) // hp = honeypot
+          });
+
+          document.getElementById("idea-text").value = "";
+          document.getElementById("idea-category").value = "";
+          document.getElementById("idea-urgency").value = "";
+          charCounterEl.textContent = "0 / 500";
+
+          successEl.innerHTML = "✅ Merci ! Ton idée a été transmise au CVL / admin.";
+          successEl.style.display = "block";
+          await displayStats();
+          await loadIdeasAdminIfNeeded();
+        } catch (err) {
+          if (err.status === 429 && err.data?.retry_after_sec) {
+            cooldownEl.innerHTML = `⏳ Merci de patienter ${err.data.retry_after_sec}s avant de renvoyer une nouvelle idée.`;
+            cooldownEl.style.display = "block";
+          } else {
+            cooldownEl.innerHTML = "❌ " + escapeHtml(err.message);
+            cooldownEl.style.display = "block";
+          }
+        }
+      });
+
+      async function loadIdeasAdminIfNeeded() {
+        await refreshAdminState(); // will load ideas if admin
+      }
+
+      async function loadIdeas() {
+        try {
+          const ideas = await api("/api/admin/ideas");
+          document.getElementById("ideas-count").textContent = `${ideas.length} idées`;
+          if (!ideas.length) {
+            document.getElementById("ideas-list").innerHTML = `
+              <div class="empty-state">
+                <div class="empty-state-icon">💡</div>
+                <div class="empty-state-text">Aucune idée reçue</div>
+              </div>`;
+            return;
+          }
+
+          document.getElementById("ideas-list").innerHTML = ideas.map(i => `
+            <div class="idea-card">
+              <div class="idea-meta">
+                <span class="badge badge-primary">${escapeHtml(i.category_label)}</span>
+                <span class="badge ${i.urgency === "haute" ? "badge-danger" : (i.urgency === "moyenne" ? "badge-warning" : "badge-success")}">${escapeHtml(i.urgency)}</span>
+                <span class="badge badge-primary">${escapeHtml(i.status)}</span>
+              </div>
+              <div class="idea-content">${escapeHtml(i.text).replaceAll("\n","<br>")}</div>
+              <div class="idea-date">${escapeHtml(new Date(i.created_at).toLocaleString(\"fr-FR\"))}</div>
+            </div>
+          `).join("");
+        } catch (e) {
+          document.getElementById("ideas-list").innerHTML = `<div class="alert alert-warning">${escapeHtml(e.message)}</div>`;
+        }
+      }
+
+      // =======================
+      // Poll
+      // =======================
+      function showCreatePollModal() {
+        document.getElementById("poll-modal").classList.add("active");
+      }
+      function closePollModal() {
+        document.getElementById("poll-modal").classList.remove("active");
+      }
+
+      function addPollOption() {
+        const list = document.getElementById("poll-options-list");
+        const count = list.querySelectorAll("input").length + 1;
+        const row = document.createElement("div");
+        row.className = "option-input-group";
+        row.innerHTML = `<input type="text" class="form-control poll-option-input" placeholder="Option ${count}" required>`;
+        list.appendChild(row);
+      }
+
+      document.getElementById("poll-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          const question = document.getElementById("poll-question").value.trim();
+          const options = Array.from(document.querySelectorAll(".poll-option-input"))
+            .map(i => i.value.trim())
+            .filter(Boolean);
+
+          await api("/api/admin/poll", {
+            method: "POST",
+            body: JSON.stringify({ question, options })
+          });
+
+          document.getElementById("poll-question").value = "";
+          document.getElementById("poll-options-list").innerHTML = `
+            <div class="option-input-group"><input type="text" class="form-control poll-option-input" placeholder="Option 1" required></div>
+            <div class="option-input-group"><input type="text" class="form-control poll-option-input" placeholder="Option 2" required></div>`;
+          closePollModal();
+          await loadPoll();
+          alert("✅ Sondage créé");
+        } catch (e2) {
+          alert("❌ " + e2.message);
+        }
+      });
+
+      async function loadPoll() {
+        try {
+          const poll = await api("/api/public/poll");
+          renderPoll(poll);
+        } catch (e) {
+          document.getElementById("poll-container").innerHTML = `<div class="alert alert-warning">${escapeHtml(e.message)}</div>`;
+        }
+      }
+
+      function renderPoll(poll) {
+        const container = document.getElementById("poll-container");
+        if (!poll || !poll.active) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📊</div>
+              <div class="empty-state-text">Aucun sondage actif pour le moment</div>
+            </div>`;
+          return;
+        }
+
+        const votedKey = `${LS.USER_VOTE}:${poll.id}`;
+        const already = localStorage.getItem(votedKey);
+
+        if (already) {
+          container.innerHTML = `
+            <div class="card">
+              <div class="card-header">📊 Résultats</div>
+              <div class="card-content">
+                <p style="margin-bottom: 1rem; color: var(--text-secondary);">${escapeHtml(poll.question)}</p>
+                ${poll.results.map(r => `
+                  <div class="poll-result">
+                    <div class="poll-result-label">${escapeHtml(r.label)} • ${r.votes} vote(s)</div>
+                    <div class="poll-result-bar"><div class="poll-result-fill" style="width:${r.percent}%">${r.percent}%</div></div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="card">
+            <div class="card-header">📊 ${escapeHtml(poll.question)}</div>
+            <div class="card-content">
+              <form id="vote-form">
+                ${poll.options.map((opt, idx) => `
+                  <label class="poll-option">
+                    <input type="radio" name="vote" value="${idx}" required>
+                    ${escapeHtml(opt)}
+                  </label>
+                `).join("")}
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">🗳️ Voter</button>
+              </form>
+            </div>
+          </div>`;
+
+        document.getElementById("vote-form").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const choice = Number(new FormData(e.target).get("vote"));
+          try {
+            await api(`/api/public/poll/${poll.id}/vote`, {
+              method: "POST",
+              body: JSON.stringify({ optionIndex: choice })
+            });
+            localStorage.setItem(votedKey, "1");
+            await displayStats();
+            await loadPoll();
+          } catch (e3) {
+            alert("❌ " + e3.message);
+          }
+        });
+      }
+
+      // =======================
+      // Infos lycée (editable in backend as info blocks)
+      // =======================
+      async function loadInfosLycee() {
+        const empty = (id) => document.getElementById(id).innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">ℹ️</div>
+            <div class="empty-state-text">Contenu indisponible</div>
+          </div>`;
+
+        try {
+          const info = await api("/api/public/info");
+          renderInfoBlock("info-jpo", info.jpo);
+          renderInfoBlock("info-stages", info.mini_stages);
+          renderInfoBlock("info-science", info.science_weekly);
+          renderInfoBlock("info-cycle", info.cycle_mauriac);
+          renderInfoBlock("info-region", info.region_aides);
+        } catch (_) {
+          ["info-jpo","info-stages","info-science","info-cycle","info-region"].forEach(empty);
+        }
+      }
+
+      function renderInfoBlock(elId, block) {
+        const el = document.getElementById(elId);
+        if (!block) {
+          el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">ℹ️</div><div class="empty-state-text">Aucune information</div></div>`;
+          return;
+        }
+        const lines = escapeHtml(block.text || "").replaceAll("\n","<br>");
+        const link = block.url ? `<p style="margin-top:0.75rem;"><a href="${escapeHtml(block.url)}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 700;">Ouvrir la source officielle</a></p>` : "";
+        el.innerHTML = `<p style="color: var(--text-secondary);">${lines}</p>${link}`;
+      }
+
+      // =======================
+      // Close modal when clicking backdrop
+      // =======================
+      document.querySelectorAll(".modal").forEach(m => {
+        m.addEventListener("click", (e) => {
+          if (e.target === m) m.classList.remove("active");
+        });
+      });
+
+      // =======================
+      // Init
+      // =======================
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      }
+      loadHomeScreen();
+      refreshAdminState();
+    </script>
+    <script src="extra.js"></script>
+
+</body>
+</html>
